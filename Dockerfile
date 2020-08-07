@@ -1,11 +1,27 @@
 FROM centos
-RUN yum install httpd -y
-RUN yum update -y
-RUN yum install php -y
 
-EXPOSE 80
-#RUN docker-php-ext-install mysqli && docker-php-ext-enable mysqli
+#installing and configuring kubectl
+RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
 
-COPY ./website  /var/www/html
 
-CMD /usr/sbin/httpd -DFOREGROUND
+RUN chmod +x ./kubectl
+RUN mv kubectl /usr/bin
+RUN mkdir /root/.kube
+COPY config  /root/.kube/
+COPY ca.crt /root/
+COPY client.key /root/
+COPY client.crt /root/
+
+
+#installing java
+RUN yum install java -y
+
+#Installing openssh-server 
+RUN yum -y install openssh-server
+RUN mkdir /root/jenkins_node
+RUN ssh-keygen -A
+COPY ssh_config /etc/ssh/ssh_config
+RUN echo "root:mohit" | chpasswd
+
+
+CMD ["/usr/sbin/sshd","-D"] && /bin/bash
