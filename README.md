@@ -30,31 +30,47 @@ Get ca.crt, client.key and client.crt file from the .minikube folder in the hom
 
 **config and ssh_config file:**
 ![1](https://raw.githubusercontent.com/mohitagal98/devops-task4/master/images/2.PNG)
+
 ### Step:2 -Configure remote node where docker is installed
 Edit /usr/lib/systemd/system/docker.service file to allow user from outside(jenkins in this case) to use docker at any random port say 4242.
+
 ![2](https://raw.githubusercontent.com/mohitagal98/devops-task4/master/images/3.PNG)
+
 Scroll through ExecStart and edit the same as above.
 ### Step:3 -Configure Jenkins Add Cloud details
 In jenkins, Navigate to add cloud (Manage Jenkins > Manage Nodes and Clouds > Configure Clouds > Add A New Cloud ).
+
 ![3](https://raw.githubusercontent.com/mohitagal98/devops-task4/master/images/4.PNG)
 ---
 
 Give docker host URL, where IP is of your remote system where docker is installed and it must have connectivity with the same.
+
 ![4](https://raw.githubusercontent.com/mohitagal98/devops-task4/master/images/5.PNG)
+
 Add docker template and give details of the image built earlier. And also label which will be used in jobs later.
+
 ![5](https://raw.githubusercontent.com/mohitagal98/devops-task4/master/images/6.PNG)
+
 Provide login details like username and password set earlier in the Dockerfile.
 ### Step-4: Configure Jobs
 **Job:1** -Job 1 to pull the Dockerfile(For web server) and web pages from github. Build image with the pages copied inside it and then push it to the Docker Hub.
 Create Job -> Configure
+
 ![6](https://raw.githubusercontent.com/mohitagal98/devops-task4/master/images/7.PNG)
+
 Add URL of github repo where the dockerfile and codes are there.
+
 ![7](https://raw.githubusercontent.com/mohitagal98/devops-task4/master/images/8.PNG)
+
 Add Build Step- **Build/Publish Docker Image** and configure it as above. Give the cloud server, Docker Hub credentials and image name. This will look for Dockerfile in current directory.
 **Job:2-** Configuring Job2 to create kubernetes deployment using the image uploaded on the Docker Hub.
+
 ![8](https://raw.githubusercontent.com/mohitagal98/devops-task4/master/images/9.PNG)
+
 Restricting Job to run on the cloud server. Kubessh is the tag of the template which is to be used to create the dynamic slave.
+
 ![9](https://raw.githubusercontent.com/mohitagal98/devops-task4/master/images/10.PNG)
+
 Add **Execute Shell** as a build step. And write the following kubernetes command to run inside it. This will create the deployment if not available or will roll out if already created to update the code.
 
 
@@ -63,7 +79,11 @@ Add **Execute Shell** as a build step. And write the following kubernetes comman
 ## Setup Complete !!
 Just need to push the dockerfile and code to the GitHub. See the sample files above.
 Run the Jobs and visualize it using the build pipeline as follows:
+
 ![10](https://raw.githubusercontent.com/mohitagal98/devops-task4/master/images/11.PNG)
+
 To confirm:
+
 ![11](https://raw.githubusercontent.com/mohitagal98/devops-task4/master/images/12.PNG)
+
 # Thank You !!
